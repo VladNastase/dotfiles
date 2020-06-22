@@ -2,16 +2,21 @@
     link:
       create: true
       relink: true
+      force: false
 
 - clean: ['~', '~/.config']
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
-  - [git clone https://github.com/powerline/fonts.git --depth=1 && ./fonts/install.sh, Installing Powerline Fonts]
-  - [sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)", Installing oh-my-zsh]
+  - [chmod +x deps.sh && ./deps.sh, Installing dependencies]
 
 - link:
     ~/.oh-my-zsh/plugins/zsh-completions: zsh/plugins/zsh-completions
     ~/.oh-my-zsh/plugins/zsh-syntax-highlighting: zsh/plugins/zsh-syntax-highlighting
+    ~/.oh-my-zsh/plugins/zsh-autosuggestions: zsh/plugins/zsh-autosuggestions
+    ~/.oh-my-zsh/custom/themes/powerlevel10k: zsh/themes/powerlevel10k
+    ~/.p10k.zsh: zsh/p10k.zsh
+    ~/.shell:
     ~/.zshrc:
+      force: true
     ~/.zsh:
