@@ -1,0 +1,15 @@
+plugins=(
+    git
+    common-aliases
+    extract
+    dircycle
+    dirhistory
+    encode64
+    history
+    sudo
+    web-search
+    wd
+    zsh-autosuggestions
+    zsh-completions
+    zsh-syntax-highlighting
+)
