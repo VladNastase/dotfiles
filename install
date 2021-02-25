@@ -2,6 +2,8 @@
 
 set -e
 
+export ZSH=$HOME/.cache/zsh4humans/v4/ohmyzsh/ohmyzsh
+
 CONFIG="install.conf.yaml"
 DOTBOT_DIR="dotbot"
 

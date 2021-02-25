@@ -15,6 +15,6 @@ plugins=(
     web-search
     wd
     # zsh-autosuggestions
-    zsh-completions
+    # zsh-completions
     # zsh-syntax-highlighting
 )
