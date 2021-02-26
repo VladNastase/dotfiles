@@ -22,4 +22,6 @@
     ~/.config/kitty: kitty
     ~/.config/picom.conf: picom/picom.conf
     ~/.config/rofi: rofi
-    
+
+- shell:
+  - [dconf load /com/gexperts/Tilix/ < tilix/tilix.dconf]
