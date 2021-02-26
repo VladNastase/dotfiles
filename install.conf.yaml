@@ -17,5 +17,5 @@
     ~/.zsh:
     ~/.gitconfig:
     ~/.config/awesome: awesome
-    ~/.config/lain/layout/fairfull.lua: awesome/custom_layouts/fairfull.lua
+    ~/.config/awesome/lain/layout/fairfull.lua: awesome/custom_layouts/fairfull.lua
     
