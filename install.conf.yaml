@@ -16,3 +16,6 @@
     ~/.zshrc: zsh/zshrc
     ~/.zsh:
     ~/.gitconfig:
+    ~/.config/awesome: awesome
+    ~/.config/lain/layout/fairfull.lua: awesome/custom_layouts/fairfull.lua
+    
