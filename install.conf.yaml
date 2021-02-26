@@ -18,4 +18,4 @@
     ~/.gitconfig:
     ~/.config/awesome: awesome
     ~/.config/awesome/lain/layout/fairfull.lua: awesome/custom_layouts/fairfull.lua
-    
+    ~/.config/flameshot: flameshot
