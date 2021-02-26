@@ -63,7 +63,6 @@ z4h source ~/.zsh/oh-my-zsh.zsh
 # oh-my-zsh plugins
 z4h source ~/.zsh/plugins.zsh
 
-echo $ZSH
 z4h source $ZSH/oh-my-zsh.sh
 
 # shell variables
