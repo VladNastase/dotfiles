@@ -6,3 +6,9 @@
 	path = awesome/lain
 	url = https://github.com/lcpz/lain/
 	ignore = dirty
+[submodule "dotbot_plugins/dotbot-sudo"]
+	path = dotbot_plugins/dotbot-sudo
+	url = https://github.com/DrDynamic/dotbot-sudo
+[submodule "dotbot_plugins/dotbot-yay"]
+	path = dotbot_plugins/dotbot-yay
+	url = https://github.com/OxSon/dotbot-yay
