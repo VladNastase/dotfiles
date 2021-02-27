@@ -56,7 +56,7 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
     ram                     # free ram
     # load                    # cpu load (might be slow)
     battery                 # internal battery
-    wifi                    # wifi speed
+    #wifi                    # wifi speed
   )
 
   typeset -g POWERLEVEL9K_MODE=nerdfont-complete

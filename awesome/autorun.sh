@@ -36,3 +36,6 @@ run pamac-tray
 # blueman-applet and msm_notifier are not installed in minimal edition
 run blueman-applet
 run msm_notifier
+
+run slack -s %U
+run flameshot
