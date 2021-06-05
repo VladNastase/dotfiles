@@ -56,7 +56,7 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
     ram                     # free ram
     # load                    # cpu load (might be slow)
     battery                 # internal battery
-    wifi                    # wifi speed
+    #wifi                    # wifi speed
   )
 
   typeset -g POWERLEVEL9K_MODE=nerdfont-complete
@@ -96,8 +96,8 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
   OS_NAME=$(cat /etc/os-release | head -n1 | cut -d "=" -f 2 | tr -d \")
   if [[ $OS_NAME = "Ubuntu" ]]; then
     typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=202
-  elif [[ $OS_NAME = "Arch Linux" ]]; then
-    typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=111
+  elif [[ $OS_NAME = "Manjaro Linux" ]]; then
+    typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=36
   fi
 
   typeset -g POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION='${P9K_CONTENT}'
