@@ -1,5 +1,5 @@
 plugins=(
-    archlinux
+    colored-man-pages
     command-not-found
     common-aliases
     extract
@@ -10,8 +10,14 @@ plugins=(
     encode64
     git
     history
+    nmap
+    otp
+    python
     sudo
+    systemadmin
     systemd
+    ubuntu
+    zoxide
     web-search
     wd
     # zsh-autosuggestions

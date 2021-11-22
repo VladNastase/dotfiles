@@ -50,7 +50,7 @@ z4h init || return
 export GPG_TTY=$TTY
 
 # Extend PATH.
-path=(~/bin $path)
+path=(~/gems/bin ~/.local/bin ~/bin $path)
 
 # Use additional Git repositories pulled in with `z4h install`.
 #
@@ -134,4 +134,8 @@ setopt no_auto_menu  # require an extra TAB press to open the completion menu
 
 
 #######################################################################################
+
+
+# Generated for envman. Do not edit.
+[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
 
