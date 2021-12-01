@@ -16,6 +16,5 @@
     ~/.zshrc: zsh/zshrc
     ~/.zsh:
     ~/.gitconfig:
-    ~/.config/flameshot: flameshot
     ~/.config/kitty: kitty
 
