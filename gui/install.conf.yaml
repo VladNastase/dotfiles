@@ -1,0 +1,12 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+
+- clean: ['~', '~/.config']
+
+- link:
+    ~/.config/flameshot: flameshot
+    ~/.config/kitty: kitty
+

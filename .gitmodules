@@ -2,18 +2,10 @@
 	path = dotbot
 	url = https://github.com/anishathalye/dotbot
 	ignore = dirty
-[submodule "zsh/plugins/zsh-syntax-highlighting"]
-	path = zsh/plugins/zsh-syntax-highlighting
-	url = https://github.com/zsh-users/zsh-syntax-highlighting
-[submodule "zsh/plugins/zsh-completions"]
-	path = zsh/plugins/zsh-completions
-	url = https://github.com/zsh-users/zsh-completions
-[submodule "zsh/themes/spaceship-prompt"]
-	path = zsh/themes/spaceship-prompt
-	url = https://github.com/denysdovhan/spaceship-prompt
-[submodule "zsh/plugins/zsh-autosuggestions"]
-	path = zsh/plugins/zsh-autosuggestions
-	url = https://github.com/zsh-users/zsh-autosuggestions
-[submodule "zsh/themes/powerlevel10k"]
-	path = zsh/themes/powerlevel10k
-	url = https://github.com/romkatv/powerlevel10k
+[submodule "lain"]
+	path = manjaro-gui/awesome/lain
+	url = https://github.com/lcpz/lain
+	ignore = dirty
+[submodule "dotbot_plugins/dotbot-apt"]
+	path = dotbot_plugins/dotbot-apt
+	url = https://github.com/bryant1410/dotbot-apt

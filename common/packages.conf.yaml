@@ -1,0 +1,9 @@
+- apt:
+  - ssh
+  - build-essential
+  - zsh
+  - vim
+  - curl
+  - python-is-python3
+  - htop
+  - tree
