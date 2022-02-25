@@ -1,4 +1,6 @@
-POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+# Tip: Looking for a nice color? Here's a one-liner to print colormap.
+#
+#   for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}; done
 
 # Temporarily change options.
 'builtin' 'local' '-a' 'p10k_config_opts'
@@ -17,7 +19,7 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
   # Zsh >= 5.1 is required.
   autoload -Uz is-at-least && is-at-least 5.1 || return
 
-  # The list of segments shown on the left.
+  # The list of segments shown on the left. Fill it with the most important segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
     # =========================[ Line #1 ]=========================
     os_icon                 # os identifier
@@ -42,21 +44,16 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
     pyenv                   # python environment (https://github.com/pyenv/pyenv)
     goenv                   # go environment (https://github.com/syndbg/goenv)
     go_version              # go version (https://golang.org)
-    haskell_stack           # haskell version from stack (https://haskellstack.org/)
-    kubecontext             # current kubernetes context (https://kubernetes.io/)
-    nnn                     # nnn shell (https://github.com/jarun/nnn)
-    todo                    # ?todo items (https://github.com/todotxt/todo.txt-cli)
-    timewarrior             # ?timewarrior tracking status (https://timewarrior.net/)
-    taskwarrior             # ?taskwarrior task count (https://taskwarrior.org/)
+    vpn_ip                  # virtual private network indicator
     time                    # current time
     # =========================[ Line #2 ]=========================
     newline
-    public_ip               # public IP address
+    # public_ip               # public IP address
+    load
+    ram                     # free RAM
     disk_usage              # disk usage
-    ram                     # free ram
-    # load                    # cpu load (might be slow)
     battery                 # internal battery
-    wifi                    # wifi speed
+    # example               # example user-defined segment (see prompt_example function below)
   )
 
   typeset -g POWERLEVEL9K_MODE=nerdfont-complete
@@ -67,21 +64,14 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
   typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SUBSEGMENT_SEPARATOR=' '  # separate segments with a space
   typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SEGMENT_SEPARATOR=        # no end-of-line symbol
 
+
   typeset -g POWERLEVEL9K_ICON_BEFORE_CONTENT=true
 
   typeset -g POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
 
-  typeset -g POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX=
-  typeset -g POWERLEVEL9K_MULTILINE_NEWLINE_PROMPT_PREFIX=
-  typeset -g POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX=
-  typeset -g POWERLEVEL9K_MULTILINE_FIRST_PROMPT_SUFFIX=
-  typeset -g POWERLEVEL9K_MULTILINE_NEWLINE_PROMPT_SUFFIX=
-  typeset -g POWERLEVEL9K_MULTILINE_LAST_PROMPT_SUFFIX=
-
-  typeset -g POWERLEVEL9K_LEFT_PROMPT_FIRST_SEGMENT_START_SYMBOL=
-  typeset -g POWERLEVEL9K_RIGHT_PROMPT_LAST_SEGMENT_END_SYMBOL=
-
   typeset -g POWERLEVEL9K_SHOW_RULER=false
+  typeset -g POWERLEVEL9K_RULER_CHAR='─'        # reasonable alternative: '·'
+  typeset -g POWERLEVEL9K_RULER_FOREGROUND=242
 
   typeset -g POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_CHAR=' '
   if [[ $POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_CHAR != ' ' ]]; then
@@ -93,12 +83,13 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
   fi
 
   #################################[ os_icon: os identifier ]##################################
-  OS_NAME=$(cat /etc/os-release | head -n1 | cut -d "=" -f 2 | tr -d \")
-  if [[ $OS_NAME = "Ubuntu" ]]; then
+  export OS_NAME="$(cat /etc/os-release | head -n1 | cut -d "=" -f 2 | tr -d \")"
+  if [[ ${OS_NAME} = "Ubuntu" ]]; then
     typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=202
-  elif [[ $OS_NAME = "Arch Linux" ]]; then
-    typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=111
+  elif [[ ${OS_NAME} = "Manjaro Linux" ]]; then
+    typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=36
   fi
+  # typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=202
 
   typeset -g POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION='${P9K_CONTENT}'
 
@@ -147,60 +138,13 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
   typeset -g POWERLEVEL9K_SHORTEN_FOLDER_MARKER="(${(j:|:)anchor_files})"
   typeset -g POWERLEVEL9K_DIR_TRUNCATE_BEFORE_MARKER=last
   typeset -g POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
-  typeset -g POWERLEVEL9K_DIR_MAX_LENGTH=55
+  typeset -g POWERLEVEL9K_DIR_MAX_LENGTH=60
   typeset -g POWERLEVEL9K_DIR_MIN_COMMAND_COLUMNS=40
   typeset -g POWERLEVEL9K_DIR_MIN_COMMAND_COLUMNS_PCT=50
   typeset -g POWERLEVEL9K_DIR_HYPERLINK=true
 
-  typeset -g POWERLEVEL9K_DIR_SHOW_WRITABLE=v2
-  typeset -g POWERLEVEL9K_LOCK_ICON='⭐'
-
-  # POWERLEVEL9K_DIR_CLASSES allows you to specify custom icons and colors for different
-  # directories. It must be an array with 3 * N elements. Each triplet consists of:
-  #
-  #   1. A pattern against which the current directory ($PWD) is matched. Matching is done with
-  #      extended_glob option enabled.
-  #   2. Directory class for the purpose of styling.
-  #   3. An empty string.
-  #
-  # Triplets are tried in order. The first triplet whose pattern matches $PWD wins.
-  #
-  # If POWERLEVEL9K_DIR_SHOW_WRITABLE is set to v2 and the current directory is not writable,
-  # its class gets suffix _NOT_WRITABLE.
-  #
-  # For example, given these settings:
-  #
-  #   typeset -g POWERLEVEL9K_DIR_CLASSES=(
-  #     '~/work(|/*)'  WORK     ''
-  #     '~(|/*)'       HOME     ''
-  #     '*'            DEFAULT  '')
-  #
-  # Whenever the current directory is ~/work or a subdirectory of ~/work, it gets styled with class
-  # WORK or WORK_NOT_WRITABLE.
-  #
-  # Simply assigning classes to directories don't have any visible effects. It merely gives you an
-  # option to define custom colors and icons for different directory classes.
-  #
-  #   # Styling for WORK.
-  #   typeset -g POWERLEVEL9K_DIR_WORK_VISUAL_IDENTIFIER_EXPANSION='⭐'
-  #   typeset -g POWERLEVEL9K_DIR_WORK_FOREGROUND=31
-  #   typeset -g POWERLEVEL9K_DIR_WORK_SHORTENED_FOREGROUND=103
-  #   typeset -g POWERLEVEL9K_DIR_WORK_ANCHOR_FOREGROUND=39
-  #
-  #   # Styling for WORK_NOT_WRITABLE.
-  #   typeset -g POWERLEVEL9K_DIR_WORK_NOT_WRITABLE_VISUAL_IDENTIFIER_EXPANSION='⭐'
-  #   typeset -g POWERLEVEL9K_DIR_WORK_NOT_WRITABLE_FOREGROUND=31
-  #   typeset -g POWERLEVEL9K_DIR_WORK_NOT_WRITABLE_SHORTENED_FOREGROUND=103
-  #   typeset -g POWERLEVEL9K_DIR_WORK_NOT_WRITABLE_ANCHOR_FOREGROUND=39
-  #
-  # If a styling parameter isn't explicitly defined for some class, it falls back to the classless
-  # parameter. For example, if POWERLEVEL9K_DIR_WORK_NOT_WRITABLE_FOREGROUND is not set, it falls
-  # back to POWERLEVEL9K_DIR_FOREGROUND.
-  #
+  typeset -g POWERLEVEL9K_DIR_SHOW_WRITABLE=v3
   typeset -g POWERLEVEL9K_DIR_CLASSES=()
-
-  # Custom prefix.
-  # typeset -g POWERLEVEL9K_DIR_PREFIX='%fin '
 
   #####################################[ vcs: git status ]######################################
   typeset -g POWERLEVEL9K_VCS_BRANCH_ICON='\ue0a0 '
@@ -209,7 +153,7 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 
   # Formatter for Git status.
   #
-  # Example output: master ⇣42⇡42 *42 merge ~42 +42 !42 ?42.
+  # Example output: master wip ⇣42⇡42 *42 merge ~42 +42 !42 ?42.
   #
   # You can edit the function to customize how Git status looks.
   #
@@ -242,28 +186,42 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
     fi
 
     local res
-    local where  # branch or tag
+
     if [[ -n $VCS_STATUS_LOCAL_BRANCH ]]; then
-      res+="${clean}${(g::)POWERLEVEL9K_VCS_BRANCH_ICON}"
-      where=${(V)VCS_STATUS_LOCAL_BRANCH}
-    elif [[ -n $VCS_STATUS_TAG ]]; then
-      res+="${meta}#"
-      where=${(V)VCS_STATUS_TAG}
+      local branch=${(V)VCS_STATUS_LOCAL_BRANCH}
+      # If local branch name is at most 32 characters long, show it in full.
+      # Otherwise show the first 12 … the last 12.
+      # Tip: To always show local branch name in full without truncation, delete the next line.
+      (( $#branch > 32 )) && branch[13,-13]="…"  # <-- this line
+      res+="${clean}${(g::)POWERLEVEL9K_VCS_BRANCH_ICON}${branch//\%/%%}"
     fi
 
-    # If local branch name or tag is at most 32 characters long, show it in full.
-    # Otherwise show the first 12 … the last 12.
-    # Tip: To always show local branch name in full without truncation, delete the next line.
-    (( $#where > 32 )) && where[13,-13]="…"
-    res+="${clean}${where//\%/%%}"  # escape %
+    if [[ -n $VCS_STATUS_TAG
+          # Show tag only if not on a branch.
+          # Tip: To always show tag, delete the next line.
+          && -z $VCS_STATUS_LOCAL_BRANCH  # <-- this line
+        ]]; then
+      local tag=${(V)VCS_STATUS_TAG}
+      # If tag name is at most 32 characters long, show it in full.
+      # Otherwise show the first 12 … the last 12.
+      # Tip: To always show tag name in full without truncation, delete the next line.
+      (( $#tag > 32 )) && tag[13,-13]="…"  # <-- this line
+      res+="${meta}#${clean}${tag//\%/%%}"
+    fi
 
-    # Display the current Git commit if there is no branch or tag.
-    # Tip: To always display the current Git commit, remove `[[ -z $where ]] &&` from the next line.
-    [[ -z $where ]] && res+="${meta}@${clean}${VCS_STATUS_COMMIT[1,8]}"
+    # Display the current Git commit if there is no branch and no tag.
+    # Tip: To always display the current Git commit, delete the next line.
+    [[ -z $VCS_STATUS_LOCAL_BRANCH && -z $VCS_STATUS_TAG ]] &&  # <-- this line
+      res+="${meta}@${clean}${VCS_STATUS_COMMIT[1,8]}"
 
     # Show tracking branch name if it differs from local branch.
     if [[ -n ${VCS_STATUS_REMOTE_BRANCH:#$VCS_STATUS_LOCAL_BRANCH} ]]; then
-      res+="${meta}:${clean}${(V)VCS_STATUS_REMOTE_BRANCH//\%/%%}"  # escape %
+      res+="${meta}:${clean}${(V)VCS_STATUS_REMOTE_BRANCH//\%/%%}"
+    fi
+
+    # Display "wip" if the latest commit's summary contains "wip" or "WIP".
+    if [[ $VCS_STATUS_COMMIT_SUMMARY == (|*[^[:alnum:]])(wip|WIP)(|[^[:alnum:]]*) ]]; then
+      res+=" ${modified}wip"
     fi
 
     # ⇣42 if behind the remote.
@@ -332,7 +290,7 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
   typeset -g POWERLEVEL9K_STATUS_OK_PIPE_FOREGROUND=70
   typeset -g POWERLEVEL9K_STATUS_OK_PIPE_VISUAL_IDENTIFIER_EXPANSION='✔'
 
-  typeset -g POWERLEVEL9K_STATUS_ERROR=true
+  typeset -g POWERLEVEL9K_STATUS_ERROR=false
   typeset -g POWERLEVEL9K_STATUS_ERROR_FOREGROUND=160
   typeset -g POWERLEVEL9K_STATUS_ERROR_VISUAL_IDENTIFIER_EXPANSION='✘'
 
@@ -358,9 +316,6 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
   typeset -g POWERLEVEL9K_BACKGROUND_JOBS_FOREGROUND=160
   typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VISUAL_IDENTIFIER_EXPANSION='☭'
 
-  ######################[ nnn: nnn shell (https://github.com/jarun/nnn) ]#######################
-  typeset -g POWERLEVEL9K_NNN_FOREGROUND=72
-
   ##################################[ disk_usage: disk usage ]##################################
   typeset -g POWERLEVEL9K_DISK_USAGE_NORMAL_FOREGROUND=35
   typeset -g POWERLEVEL9K_DISK_USAGE_WARNING_FOREGROUND=220
@@ -377,62 +332,6 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
   typeset -g POWERLEVEL9K_LOAD_NORMAL_FOREGROUND=66
   typeset -g POWERLEVEL9K_LOAD_WARNING_FOREGROUND=178
   typeset -g POWERLEVEL9K_LOAD_CRITICAL_FOREGROUND=166
-
-  ################[ todo: todo items (https://github.com/todotxt/todo.txt-cli) ]################
-  # Todo color.
-  typeset -g POWERLEVEL9K_TODO_FOREGROUND=110
-  # Hide todo when the total number of tasks is zero.
-  typeset -g POWERLEVEL9K_TODO_HIDE_ZERO_TOTAL=true
-  # Hide todo when the number of tasks after filtering is zero.
-  typeset -g POWERLEVEL9K_TODO_HIDE_ZERO_FILTERED=false
-
-  # Todo format. The following parameters are available within the expansion.
-  #
-  # - P9K_TODO_TOTAL_TASK_COUNT     The total number of tasks.
-  # - P9K_TODO_FILTERED_TASK_COUNT  The number of tasks after filtering.
-  #
-  # These variables correspond to the last line of the output of `todo.sh -p ls`:
-  #
-  #   TODO: 24 of 42 tasks shown
-  #
-  # Here 24 is P9K_TODO_FILTERED_TASK_COUNT and 42 is P9K_TODO_TOTAL_TASK_COUNT.
-  #
-  # typeset -g POWERLEVEL9K_TODO_CONTENT_EXPANSION='$P9K_TODO_FILTERED_TASK_COUNT'
-
-  # Custom icon.
-  # typeset -g POWERLEVEL9K_TODO_VISUAL_IDENTIFIER_EXPANSION='⭐'
-
-  ###########[ timewarrior: timewarrior tracking status (https://timewarrior.net/) ]############
-  # Timewarrior color.
-  typeset -g POWERLEVEL9K_TIMEWARRIOR_FOREGROUND=110
-  # If the tracked task is longer than 24 characters, truncate and append "…".
-  # Tip: To always display tasks without truncation, delete the following parameter.
-  # Tip: To hide task names and display just the icon when time tracking is enabled, set the
-  # value of the following parameter to "".
-  typeset -g POWERLEVEL9K_TIMEWARRIOR_CONTENT_EXPANSION='${P9K_CONTENT:0:24}${${P9K_CONTENT:24}:+…}'
-
-  # Custom icon.
-  # typeset -g POWERLEVEL9K_TIMEWARRIOR_VISUAL_IDENTIFIER_EXPANSION='⭐'
-
-  ##############[ taskwarrior: taskwarrior task count (https://taskwarrior.org/) ]##############
-  # Taskwarrior color.
-  typeset -g POWERLEVEL9K_TASKWARRIOR_FOREGROUND=74
-  
-  # Taskwarrior segment format. The following parameters are available within the expansion.
-  #
-  # - P9K_TASKWARRIOR_PENDING_COUNT   The number of pending tasks: `task +PENDING count`.
-  # - P9K_TASKWARRIOR_OVERDUE_COUNT   The number of overdue tasks: `task +OVERDUE count`.
-  #
-  # Zero values are represented as empty parameters.
-  #
-  # The default format:
-  #
-  #   '${P9K_TASKWARRIOR_OVERDUE_COUNT:+"!$P9K_TASKWARRIOR_OVERDUE_COUNT/"}$P9K_TASKWARRIOR_PENDING_COUNT'
-  #
-  # typeset -g POWERLEVEL9K_TASKWARRIOR_CONTENT_EXPANSION='$P9K_TASKWARRIOR_PENDING_COUNT'
-
-  # Custom icon.
-  # typeset -g POWERLEVEL9K_TASKWARRIOR_VISUAL_IDENTIFIER_EXPANSION='⭐'
 
   ##################################[ context: user@hostname ]##################################
   typeset -g POWERLEVEL9K_CONTEXT_ROOT_FOREGROUND=160
@@ -451,14 +350,6 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
   typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_WITH_PYENV=false
   typeset -g POWERLEVEL9K_VIRTUALENV_{LEFT,RIGHT}_DELIMITER=
 
-  ################[ pyenv: python environment (https://github.com/pyenv/pyenv) ]################
-  typeset -g POWERLEVEL9K_PYENV_FOREGROUND=37
-  typeset -g POWERLEVEL9K_PYENV_SOURCES=(shell local global)
-  typeset -g POWERLEVEL9K_PYENV_PROMPT_ALWAYS_SHOW=false
-  typeset -g POWERLEVEL9K_PYENV_SHOW_SYSTEM=true
-
-  typeset -g POWERLEVEL9K_PYENV_CONTENT_EXPANSION='${P9K_CONTENT}${${P9K_PYENV_PYTHON_VERSION:#$P9K_CONTENT}:+ $P9K_PYENV_PYTHON_VERSION}'
-
   ################[ goenv: go environment (https://github.com/syndbg/goenv) ]################
   typeset -g POWERLEVEL9K_GOENV_FOREGROUND=37
   typeset -g POWERLEVEL9K_GOENV_SOURCES=(shell local global)
@@ -469,23 +360,10 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
   typeset -g POWERLEVEL9K_GO_VERSION_FOREGROUND=37
   typeset -g POWERLEVEL9K_GO_VERSION_PROJECT_ONLY=true
 
-  ##########[ haskell_stack: haskell version from stack (https://haskellstack.org/) ]###########
-  typeset -g POWERLEVEL9K_HASKELL_STACK_FOREGROUND=172
-  typeset -g POWERLEVEL9K_HASKELL_STACK_SOURCES=(shell local)
-  typeset -g POWERLEVEL9K_HASKELL_STACK_ALWAYS_SHOW=true
-
-  #############[ kubecontext: current kubernetes context (https://kubernetes.io/) ]#############
-  typeset -g POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND='kubectl|helm|kubens|kubectx|oc|istioctl|kogito'
-
-  typeset -g POWERLEVEL9K_KUBECONTEXT_CLASSES=(
-      '*'       DEFAULT)
-  typeset -g POWERLEVEL9K_KUBECONTEXT_DEFAULT_FOREGROUND=134
-  typeset -g POWERLEVEL9K_KUBECONTEXT_DEFAULT_CONTENT_EXPANSION=
-
-  POWERLEVEL9K_KUBECONTEXT_DEFAULT_CONTENT_EXPANSION+='${P9K_KUBECONTEXT_CLOUD_CLUSTER:-${P9K_KUBECONTEXT_NAME}}'
-  POWERLEVEL9K_KUBECONTEXT_DEFAULT_CONTENT_EXPANSION+='${${:-/$P9K_KUBECONTEXT_NAMESPACE}:#/default}'
-
-  typeset -g POWERLEVEL9K_KUBECONTEXT_PREFIX='%fat '
+  ########################[ vpn_ip: virtual private network indicator ]#########################
+  typeset -g POWERLEVEL9K_VPN_IP_FOREGROUND=81
+  typeset -g POWERLEVEL9K_VPN_IP_INTERFACE='(gpd|wg|(.*tun)|tailscale)[0-9]*'
+  typeset -g POWERLEVEL9K_VPN_IP_SHOW_ALL=false
 
   ###############################[ public_ip: public IP address ]###############################
   typeset -g POWERLEVEL9K_PUBLIC_IP_FOREGROUND=94
@@ -497,9 +375,6 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
   typeset -g POWERLEVEL9K_BATTERY_DISCONNECTED_FOREGROUND=178
   typeset -g POWERLEVEL9K_BATTERY_STAGES='\uf58d\uf579\uf57a\uf57b\uf57c\uf57d\uf57e\uf57f\uf580\uf581\uf578'
   typeset -g POWERLEVEL9K_BATTERY_VERBOSE=false
-
-  #####################################[ wifi: wifi speed ]#####################################
-  typeset -g POWERLEVEL9K_WIFI_FOREGROUND=68
 
   ####################################[ time: current time ]####################################
   typeset -g POWERLEVEL9K_TIME_FOREGROUND=66
@@ -513,6 +388,8 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
   typeset -g POWERLEVEL9K_INSTANT_PROMPT=verbose
 
   typeset -g POWERLEVEL9K_DISABLE_HOT_RELOAD=true
+
+  source ~/.p10k_local.zsh &> /dev/null
 
   (( ! $+functions[p10k] )) || p10k reload
 }

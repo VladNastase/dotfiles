@@ -1,0 +1,9 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+
+- link:
+    ~/.p10k_local.zsh: zsh/p10k_local.zsh
+    ~/.env.zsh: zsh/env.zsh

@@ -2,14 +2,22 @@
 
 set -e
 
+COMMON_CONFIG_FOLDER="common"
 CONFIG="install.conf.yaml"
+PACKAGES_CONFIG="packages.conf.yaml"
 DOTBOT_DIR="dotbot"
+DOTBOT_PLUGINS_DIR="dotbot_plugins"
 
 DOTBOT_BIN="bin/dotbot"
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 cd "${BASEDIR}"
 git -C "${DOTBOT_DIR}" submodule sync --quiet --recursive
-git submodule update --init --recursive "${DOTBOT_DIR}"
+git submodule update --init --recursive
 
-"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${@}"
+for CONF in ${COMMON_CONFIG_FOLDER} ${@}; do
+	pushd $CONF > /dev/null
+	[[ -f "${PACKAGES_CONFIG}" ]] && sudo "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -p "${BASEDIR}/${DOTBOT_PLUGINS_DIR}/dotbot-apt/apt.py" -d "$(pwd)" -c "${PACKAGES_CONFIG}"
+	[[ -f "${CONFIG}" ]] && "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "$(pwd)" -c "${CONFIG}"
+	popd > /dev/null
+done

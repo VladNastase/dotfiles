@@ -1,0 +1,8 @@
+[user]
+	name = Vlad Nastase
+	email = vladdnastase@gmail.com
+	username = VladNastase
+[init]
+	defaultBranch = master
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/
