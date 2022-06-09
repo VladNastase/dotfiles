@@ -41,6 +41,10 @@ zstyle ':z4h:ssh:*'                   enable 'yes'
 # enabled hosts.
 zstyle ':z4h:ssh:*' send-extra-files '~/.nanorc' '~/.env.zsh'
 
+zstyle ':z4h:*' fzf-flags --color=hl:191,hl+:191
+zstyle ':z4h:fzf-complete' recurse-dirs yes
+zstyle ':z4h:fzf-complete' fzf-bindings tab:repeat
+
 # Clone additional Git repositories from GitHub.
 #
 # This doesn't do anything apart from cloning the repository and keeping it
