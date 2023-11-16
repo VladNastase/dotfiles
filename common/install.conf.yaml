@@ -12,5 +12,6 @@
     ~/.zshrc: zsh/zshrc
     ~/.p10k.zsh: zsh/p10k.zsh
 
-      #- shell:
-      #- [chsh -s $(which zsh), Making zsh the default shell]
+- shell:
+    - [curl https://pyenv.run | bash, Install pyenv]
+    - [PROFILE=/dev/null bash -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash', Install nvm v0.39.5]
